@@ -1,0 +1,25 @@
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+## Globally shared configuration
+global:
+  # -- Common labels for the all resources
+  additionalLabels:
+    {}
+
+postgres:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 14.13
+    pullPolicy: IfNotPresent
+
+  auth:
+    username: hoppscotch
+    password: "" # If not set, a random 24 characters password will be generated
+    database: hoppscotch
+
+  persistence:
+    size: 10Gi
+    path: /mnt/data

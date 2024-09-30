@@ -1,0 +1,38 @@
+{{- if .Values.postgres.enabled -}}
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: {{ include "hoppscotch.fullname" . }}-postgres-pv-volume
+  labels:
+    {{- include "hoppscotch.labels" . | nindent 4 }}
+  annotations:
+    {{- include "hoppscotch.annotations" . | nindent 4 }}
+spec:
+  storageClassName: manual
+  capacity:
+    storage: {{ .Values.postgres.persistence.size }}
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: {{ .Values.postgres.persistence.path | quote }}
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "hoppscotch.fullname" . }}-postgres-pv-claim
+  labels:
+    {{- include "hoppscotch.labels" . | nindent 4 }}
+  annotations:
+    {{- include "hoppscotch.annotations" . | nindent 4 }}
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: {{ .Values.postgres.persistence.size }}
+
+{{- end -}}

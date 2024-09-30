@@ -1,0 +1,16 @@
+{{- if .Values.postgres.enabled -}}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hoppscotch.fullname" . }}-postgres
+  labels:
+    {{- include "hoppscotch.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+   - port: 5432
+  selector:
+    {{- include "hoppscotch.selectorLabels" . | nindent 4 }}
+
+{{- end -}}

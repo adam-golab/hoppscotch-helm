@@ -1,0 +1,7 @@
+apiVersion: v2
+name: hoppscotch
+home: https://hoppscotch.io
+description: Hoppscotch is a light-weight, web based API development suite.
+type: application
+version: 0.1.0
+appVersion: 2024.8.3
