@@ -1,18 +1,21 @@
 {{- if .Values.postgres.enabled -}}
+{{- $labelsContext := (dict "context" . "name" "postgres") -}}
 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "hoppscotch.fullname" . }}-postgres
+  labels:
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      {{- include "hoppscotch.selectorLabels" . | nindent 6 }}
+      {{- include "hoppscotch.selectorLabels" $labelsContext | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "hoppscotch.labels" . | nindent 8 }}
+        {{- include "hoppscotch.labels" $labelsContext | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -21,10 +24,10 @@ spec:
       containers:
         - name: {{ include "hoppscotch.fullname" . }}-postgres
           image: postgres:10.1
-          image: "{{ default .Values.postgres.image.repository "postgres" }}:{{ default .Values.postgres.image.tag "14.13" }}"
+          image: "{{ .Values.postgres.image.repository }}:{{ .Values.postgres.image.tag }}"
           imagePullPolicy: {{ .Values.postgres.image.pullPolicy }}
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.postgres.service.port }}
           envFrom:
             - secretRef:
                 name: {{ include "hoppscotch.fullname" . }}-postgres

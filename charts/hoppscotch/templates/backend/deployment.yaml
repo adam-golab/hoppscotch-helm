@@ -1,0 +1,54 @@
+{{- $labelsContext := (dict "context" . "name" "backend") -}}
+{{- $fullName := include "hoppscotch.fullname" . -}}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hoppscotch.fullname" . }}-backend
+  labels:
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
+    {{- if .Values.backend.extraLabels }}
+      {{- toYaml .Values.backend.extraLabels | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.backend.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "hoppscotch.selectorLabels" $labelsContext | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "hoppscotch.labels" $labelsContext | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      {{- with .Values.backend }}
+        - name: {{ $fullName }}-backend
+          image: "{{ .image.repository }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .service.containerPort }}
+              protocol: TCP
+          {{- if .probes }}
+          {{- if .probes.readinessProbe }}
+          readinessProbe:
+            {{ .probes.readinessProbe_type }}:
+              path: {{ .probes.readinessProbe_path }}
+              port: {{ .service.containerPort }}
+            {{- toYaml .probes.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- if .probes.livenessProbe }}
+          livenessProbe:
+            {{ .probes.livenessProbe_type }}:
+              path: {{ .probes.livenessProbe_path }}
+              port: {{ .service.containerPort }}
+              {{- toYaml .probes.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- end }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+      {{- end }}

@@ -7,6 +7,184 @@ global:
   # -- Common labels for the all resources
   additionalLabels:
     {}
+    # app: hoppscotch
+
+  baseUrl: "" # Base URL for the Hoppscotch instance
+  # @default -- `same as the baseUrl`
+  shortcodeBaseUrl: "" # A URL to generate shortcodes for sharing, defaults to baseUrl
+  enableSubpathBasedAccess: true # Enable subpath based access to the Hoppscotch instance
+
+  tosLink: https://docs.hoppscotch.io/support/terms
+  privacyPolicyLink: https://docs.hoppscotch.io/support/privacy
+
+  auth:
+    providers: "EMAIL" # Comma separated list of allowed auth providers (GOOGLE,GITHUB,MICROSOFT,EMAIL)
+    google:
+      clientId: ""
+      clientSecret: ""
+    github:
+      clientId: ""
+      clientSecret: ""
+    microsoft:
+      clientId: ""
+      clientSecret: ""
+      tenant: "common"
+
+  mailer:
+    smtpEnable: true
+    useCustomConfigs: false
+    addressFrom: ""
+    smtpUrl: "" # used if custom mailer configs is false
+    # The following are used if custom mailer configs is true
+    smtpHost: ""
+    smtpPort: "587"
+    smtpSecure: "true"
+    smtpUser: ""
+    smtpPassword: ""
+    tlsRejectUnauthorized: "true"
+
+  ingress:
+    enabled: true
+
+admin:
+  # @default -- `{baseUrl}/admin`
+  url: ""
+  replicaCount: 1
+  extraLabels: {}
+  image:
+    repository: hoppscotch/hoppscotch-admin
+    tag: 2024.8.3
+    pullPolicy: IfNotPresent
+  service:
+    containerPort: 3100
+  probes:
+    readinessProbe_path: /
+    readinessProbe_type: httpGet
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 15
+
+    livenessProbe_type: httpGet
+    livenessProbe_path: /
+    livenessProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 10
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  ingress:
+    annotations: {}
+    ingressClassName: ""
+    tls: []
+      # - hosts:
+      #   - chart-example.local
+      #   secretName: chart-example-tls
+    rules: []
+      # - host: chart-example.local
+      #   paths:
+      #     - path: /admin
+      #       pathType: Prefix
+
+frontend:
+  # @default -- `{baseUrl}`
+  url: ""
+  replicaCount: 1
+  extraLabels: {}
+  image:
+    repository: hoppscotch/hoppscotch-frontend
+    tag: 2024.8.3
+    pullPolicy: IfNotPresent
+  service:
+    containerPort: 3000
+  probes:
+    readinessProbe_path: /
+    readinessProbe_type: httpGet
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 15
+
+    livenessProbe_type: httpGet
+    livenessProbe_path: /
+    livenessProbe:
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      failureThreshold: 10
+  resources:
+    limits:
+      cpu: 200m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  ingress:
+    annotations: {}
+    ingressClassName: ""
+    tls: []
+      # - hosts:
+      #   - chart-example.local
+      #   secretName: chart-example-tls
+    rules: []
+      # - host: chart-example.local
+      #   paths:
+      #     - path: /
+      #       pathType: Prefix
+
+backend:
+  # @default -- `{baseUrl}/api`
+  url: ""
+  replicaCount: 1
+  extraLabels: {}
+  image:
+    repository: hoppscotch/hoppscotch-backend
+    tag: 2024.8.3
+    pullPolicy: IfNotPresent
+  service:
+    containerPort: 3170
+  probes:
+    readinessProbe_path: /ping
+    readinessProbe_type: httpGet
+    readinessProbe:
+      initialDelaySeconds: 10
+      periodSeconds: 5
+      failureThreshold: 20
+
+    livenessProbe_type: httpGet
+    livenessProbe_path: /ping
+    livenessProbe:
+      initialDelaySeconds: 100
+      periodSeconds: 30
+      failureThreshold: 10
+  resources:
+    limits:
+      cpu: 1
+      memory: 1536Mi
+    requests:
+      cpu: 500m
+      memory: 1536Mi
+  ingress:
+    annotations: {}
+    ingressClassName: ""
+    tls: []
+      # - hosts:
+      #   - chart-example.local
+      #   secretName: chart-example-tls
+    rules: []
+      # - host: chart-example.local
+      #   paths:
+      #     - path: /api
+      #       pathType: Prefix
+  secrets:
+    jwt: ""
+    session: ""
+    dataEncryptionKey: "" # Sensitive Data Encryption Key while storing in Database (32 character)
+
 
 postgres:
   enabled: true
@@ -23,3 +201,6 @@ postgres:
   persistence:
     size: 10Gi
     path: /mnt/data
+
+  service:
+    port: 5432

@@ -1,0 +1,50 @@
+{{- if .Values.global.ingress.enabled -}}
+{{- $labelsContext := (dict "context" . "name" "backend") -}}
+{{- $fullName := include "hoppscotch.fullname" . -}}
+{{- $svcPort := .Values.backend.service.containerPort -}}
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "hoppscotch.fullname" . }}-backend
+  labels:
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
+    {{- if .Values.backend.extraLabels }}
+      {{- toYaml .Values.backend.extraLabels | nindent 4 }}
+    {{- end }}
+  {{- with .Values.backend.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- with .Values.backend.ingress }}
+spec:
+{{- if .ingressClassName }}
+  ingressClassName: {{ .ingressClassName }}
+{{- end }}
+{{- if .tls }}
+  tls:
+  {{- range .tls }}
+  - hosts:
+    {{- range .hosts }}
+      - {{ . | quote }}
+    {{- end }}
+    secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  rules:
+  {{- range .hosts }}
+  - host: {{ .host | quote }}
+    http:
+      paths:
+        {{- range .paths }}
+        - path: {{ .path }}
+          pathType: {{ .pathType }}
+          backend:
+            service:
+              name: {{ $fullName }}-backend
+              port:
+                number: {{ $svcPort }}
+        {{- end }}
+  {{- end }}
+{{- end }}
+{{- end }}

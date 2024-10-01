@@ -1,17 +1,16 @@
-{{- if .Values.postgres.enabled -}}
-{{- $labelsContext := (dict "context" . "name" "postgres") -}}
+{{- $labelsContext := (dict "context" . "name" "admin") -}}
 
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hoppscotch.fullname" . }}-postgres
+  name: {{ include "hoppscotch.fullname" . }}-admin
   labels:
     {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
 spec:
   type: ClusterIP
   ports:
-   - port: {{ .Values.postgres.service.port }}
+    - name: http
+      port: {{ .Values.admin.service.containerPort }}
+      protocol: TCP
   selector:
     {{- include "hoppscotch.selectorLabels" $labelsContext | nindent 4 }}
-
-{{- end -}}

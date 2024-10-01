@@ -1,13 +1,12 @@
 {{- if .Values.postgres.enabled -}}
+{{- $labelsContext := (dict "context" . "name" "postgres") -}}
 
 apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: {{ include "hoppscotch.fullname" . }}-postgres-pv-volume
   labels:
-    {{- include "hoppscotch.labels" . | nindent 4 }}
-  annotations:
-    {{- include "hoppscotch.annotations" . | nindent 4 }}
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
 spec:
   storageClassName: manual
   capacity:
@@ -24,9 +23,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ include "hoppscotch.fullname" . }}-postgres-pv-claim
   labels:
-    {{- include "hoppscotch.labels" . | nindent 4 }}
-  annotations:
-    {{- include "hoppscotch.annotations" . | nindent 4 }}
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
 spec:
   storageClassName: manual
   accessModes:
