@@ -16,6 +16,15 @@ global:
 
   tosLink: https://docs.hoppscotch.io/support/terms
   privacyPolicyLink: https://docs.hoppscotch.io/support/privacy
+  certificate:
+    enabled: false
+    secretName: ""
+    issuerRef:
+      name: letsencrypt-production
+      kind: ClusterIssuer
+    commonName: ""
+    dnsNames: []
+
 
   auth:
     providers: "EMAIL" # Comma separated list of allowed auth providers (GOOGLE,GITHUB,MICROSOFT,EMAIL)
@@ -139,6 +148,7 @@ frontend:
 backend:
   # @default -- `{baseUrl}/api`
   url: ""
+  websocketUrl: ""
   replicaCount: 1
   extraLabels: {}
   image:
@@ -190,7 +200,7 @@ postgres:
   enabled: true
   image:
     repository: postgres
-    tag: 14.13
+    tag: 15.3
     pullPolicy: IfNotPresent
 
   auth:

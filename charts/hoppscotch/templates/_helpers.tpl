@@ -100,11 +100,7 @@ Frontend env variables
 {{/* Credentials */}}
 {{- define "hoppscotch.secrets.database.password" -}}
 {{- $secretName := printf "%s-postgres" (include "hoppscotch.fullname" .)}}
-{{- if (lookup "v1" "Secret" .Release.Namespace $secretName).data }}
-{{- (lookup "v1" "Secret" .Release.Namespace $secretName).data.POSTGRES_PASSWORD}}
-{{- else -}}
 {{- .Values.postgres.auth.password | default (randAlphaNum 24) }}
-{{- end -}}
 {{- end -}}
 
 {{- define "hoppscotch.secrets.database.username" -}}

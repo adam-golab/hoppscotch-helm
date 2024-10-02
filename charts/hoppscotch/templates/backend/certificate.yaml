@@ -1,0 +1,19 @@
+{{- if .Values.global.certificate.enabled -}}
+{{- $fullName := include "hoppscotch.fullname" . -}}
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ $fullName }}-tls
+spec:
+  secretName: {{ .Values.global.certificate.secretName }}
+  issuerRef:
+    name: {{ .Values.global.certificate.issuerRef.name }}
+    kind: {{ .Values.global.certificate.issuerRef.kind }}
+  commonName: {{ .Values.global.certificate.commonName }}
+  dnsNames: 
+    {{- range .Values.global.certificate.dnsNames }}
+    - {{ . }}
+    {{- end }}
+
+{{- end }}

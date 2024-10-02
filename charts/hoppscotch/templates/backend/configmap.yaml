@@ -7,10 +7,10 @@ metadata:
   labels:
     {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
 data:
-  TOKEN_SALT_COMPLEXITY: 10
-  MAGIC_LINK_TOKEN_VALIDITY: 3
-  REFRESH_TOKEN_VALIDITY: 604800000 # Default validity is 7 days (604800000 ms) in ms
-  ACCESS_TOKEN_VALIDITY: 86400000 # Default validity is 1 day (86400000 ms) in ms
+  TOKEN_SALT_COMPLEXITY: "10"
+  MAGIC_LINK_TOKEN_VALIDITY: "3"
+  REFRESH_TOKEN_VALIDITY: "604800000" # Default validity is 7 days (604800000 ms) in ms
+  ACCESS_TOKEN_VALIDITY: "86400000" # Default validity is 1 day (86400000 ms) in ms
   ALLOW_SECURE_COOKIES: "true"
   REDIRECT_URL: {{ .Values.global.baseUrl | quote }}
   WHITELISTED_ORIGINS: {{ printf "%s,%s,%s" .Values.global.baseUrl (include "hoppscotch.admin.url" .) (include "hoppscotch.backend.url" .) | quote }}

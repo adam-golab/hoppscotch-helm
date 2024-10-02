@@ -51,4 +51,10 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .resources | nindent 12 }}
+          envFrom:
+            - configMapRef:
+                name: {{ $fullName }}-backend
+            - secretRef:
+                name: {{ $fullName }}-backend          
+
       {{- end }}

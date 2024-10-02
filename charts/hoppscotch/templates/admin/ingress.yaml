@@ -32,7 +32,7 @@ spec:
   {{- end }}
 {{- end }}
   rules:
-  {{- range .hosts }}
+  {{- range .rules }}
   - host: {{ .host | quote }}
     http:
       paths:
