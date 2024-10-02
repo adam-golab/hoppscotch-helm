@@ -51,10 +51,12 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .resources | nindent 12 }}
+          env:
+            {{- include "hoppscotch.env.frontend" $ | indent 12 }}
           envFrom:
             - configMapRef:
                 name: {{ $fullName }}-backend
             - secretRef:
-                name: {{ $fullName }}-backend          
+                name: {{ $fullName }}-backend
 
       {{- end }}

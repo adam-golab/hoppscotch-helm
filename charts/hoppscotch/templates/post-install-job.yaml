@@ -1,0 +1,37 @@
+{{- $labelsContext := (dict "context" . "name" "migrations") -}}
+{{- $fullName := include "hoppscotch.fullname" . -}}
+
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $fullName }}-post-install-job
+  labels:
+    {{- include "hoppscotch.labels" $labelsContext | nindent 4 }}
+  annotations:
+    # This is what defines this resource as a hook. Without this line, the
+    # job is considered part of the release.
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    metadata:
+      name: "{{ .Release.Name }}"
+      labels:
+        {{- include "hoppscotch.labels" $labelsContext | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      restartPolicy: Never
+      containers:
+      - name: post-install-job
+        image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
+        imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
+        command: ["pnpx", "prisma", "migrate", "deploy"]
+        envFrom:
+          - configMapRef:
+              name: {{ $fullName }}-backend
+          - secretRef:
+              name: {{ $fullName }}-backend

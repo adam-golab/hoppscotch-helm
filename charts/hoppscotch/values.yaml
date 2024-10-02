@@ -67,7 +67,7 @@ admin:
   service:
     containerPort: 3100
   probes:
-    readinessProbe_path: /
+    readinessProbe_path: /admin
     readinessProbe_type: httpGet
     readinessProbe:
       initialDelaySeconds: 10
@@ -75,7 +75,7 @@ admin:
       failureThreshold: 15
 
     livenessProbe_type: httpGet
-    livenessProbe_path: /
+    livenessProbe_path: /admin
     livenessProbe:
       initialDelaySeconds: 30
       periodSeconds: 5
